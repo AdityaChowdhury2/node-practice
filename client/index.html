@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>My First ERN Practice</title>
+		<!-- Required meta tags -->
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, shrink-to-fit=no"
+		/>
+
+		<!-- Bootstrap CSS -->
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+			integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+			crossorigin="anonymous"
+		/>
+		<link rel="stylesheet" href="style.css" />
+	</head>
+	<body>
+		<div class="text-center">
+			<h1 id="title"></h1>
+		</div>
+		<p id="userName"></p>
+		<div class="container">
+			<div class="row">
+				<label for="Name">Item Name</label>
+				<input type="text" name="name" id="name" class="form-control" />
+				<label for="Name">Item Price</label>
+				<input
+					type="text"
+					name="price"
+					id="price"
+					class="form-control"
+				/><input
+					type="button"
+					value="Submit"
+					id="submitBtn"
+					class="btn btn-warning mt-2"
+				/>
+			</div>
+
+			<div class="row text-center">
+				<div class="col-md-6">
+					Item
+					<ul id="nameList" class="list-group"></ul>
+				</div>
+				<div class="col-md-6">
+					Price
+					<ul id="priceList"></ul>
+				</div>
+			</div>
+		</div>
+		<script>
+			const title = document.getElementById("title");
+			const submitBtn = document.getElementById("submitBtn");
+			fetch("http://localhost:4500")
+				.then((response) => response.json())
+				.then((data) => (title.innerHTML = data.title));
+			submitBtn.addEventListener("click", () => {
+				let itemName = document.getElementById("name");
+				let itemPrice = document.getElementById("price");
+
+				const item = { name: itemName.value, price: itemPrice.value };
+				fetch("http://localhost:4500/addItem", {
+					method: "POST",
+					body: JSON.stringify(item),
+					headers: {
+						"Content-type": "application/json; charset=UTF-8",
+					},
+				})
+					.then((response) => response.json())
+					.then((data) => {
+						const ulName = document.getElementById("nameList");
+						const liName = document.createElement("li");
+						const nameTextNode = document.createTextNode(data.name);
+						const ulPrice = document.getElementById("priceList");
+						const liPrice = document.createElement("li");
+						const priceTextNode = document.createTextNode(
+							data.price
+						);
+
+						const nameListNode = ulName.appendChild(liName);
+						nameListNode.classList.add("list-group-item");
+						nameListNode.appendChild(nameTextNode);
+						itemName.value = "";
+
+						const priceListNode = ulPrice.appendChild(liPrice);
+						priceListNode.appendChild(priceTextNode);
+						priceListNode.classList.add("list-group-item");
+						itemPrice.value = "";
+					});
+			});
+		</script>
+		<!-- Optional JavaScript -->
+		<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+		<script
+			src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+			integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+			integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+			crossorigin="anonymous"
+		></script>
+		<script
+			src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+			integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+			crossorigin="anonymous"
+		></script>
+	</body>
+</html>
